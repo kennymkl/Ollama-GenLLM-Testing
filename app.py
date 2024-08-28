@@ -1,13 +1,27 @@
 import streamlit as st
 import subprocess
 
+
+model_options = {
+    "Llama3.1": "llama3.1",
+    "Mistral": "mistral",
+    #Model options
+}
+
+st.sidebar.title("Model Selection")
+selected_model = st.sidebar.selectbox("Choose a Generative LLM", list(model_options.keys()))
+
+# Load the selected YOLO model
+model = model_options[selected_model]
+
 def generate_text(prompt):
     try:
         result = subprocess.run(
-            ["ollama", "run", "mistral", prompt], #ollama command in local pc
+            ["ollama", "run", model, prompt], #ollama command in local pc
             capture_output=True,
             text=True,
-            shell=True
+            shell=True,
+            encoding='utf-8'
         )
         if result.returncode == 0:
             #Remove console mode errors for some reason they keep showing up
@@ -25,7 +39,7 @@ def generate_text(prompt):
 
 
 def main():
-    st.title("Ollama on Streamlit")
+    st.title("SimpleChat: Ollama Models Chatbot")
     
     #Chat history start
     if "messages" not in st.session_state:
